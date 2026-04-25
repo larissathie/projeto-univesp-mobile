@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Condo Secure 🏢
 
 Aplicativo mobile para gerenciamento de condomínios.
