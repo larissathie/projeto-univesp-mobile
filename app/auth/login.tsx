@@ -1,12 +1,8 @@
-import { Image } from 'react-native'; 
-import { useState } from 'react';
-import {
-  View, Text, TextInput, TouchableOpacity,
-  StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform
-} from 'react-native';
 import { router } from 'expo-router';
-import { supabase } from '../../lib/supabase';
+import { useState } from 'react';
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/colors';
+import { supabase } from '../../lib/supabase';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -28,6 +24,28 @@ export default function LoginScreen() {
       Alert.alert('Erro ao entrar', error.message);
     } else {
       router.replace('/(tabs)');
+    }
+  }
+
+  async function handleSignUp() {
+    if (!email || !senha) {
+      Alert.alert('Atenção', 'Preencha e-mail e senha.');
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password: senha,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      Alert.alert('Erro ao cadastrar', error.message);
+    } else {
+      Alert.alert('Sucesso', 'Conta criada!');
     }
   }
 
@@ -85,6 +103,12 @@ export default function LoginScreen() {
             ? <ActivityIndicator color="#fff" />
             : <Text style={styles.btnLoginText}>Acessar</Text>
           }
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleSignUp}>
+          <Text style={{ textAlign: 'center', color: Colors.primary }}>
+            Criar conta
+          </Text>
         </TouchableOpacity>
 
         <Text style={styles.helpText}>
