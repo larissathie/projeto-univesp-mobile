@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Colors } from '@/constants/colors';
 import { router } from 'expo-router';
+=======
+import { Colors } from '@/constants/colors';
+import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+>>>>>>> f1e9d5b245d6ef71f5b6cad8aacc9ccdb46d1261
 
 export default function HomeScreen() {
   const [encomendasPendentes, setEncomendasPendentes] = useState(0);
@@ -156,4 +164,8 @@ const styles = StyleSheet.create({
   quickBtnIcon: { fontSize: 24 },
   quickBtnTitle: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary },
   quickBtnSub: { fontSize: 12, color: Colors.textSecondary },
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> f1e9d5b245d6ef71f5b6cad8aacc9ccdb46d1261
