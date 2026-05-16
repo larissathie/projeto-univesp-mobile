@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/colors';
-import { supabase } from '@/lib/supabase';
+const API_URL = 'https://projeto-integrador-ii-p8kb.onrender.com';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -14,104 +14,26 @@ export default function HomeScreen() {
   }, []);
 
   async function carregarDados() {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+  try {
+    // Encomendas do apartamento 101
+    const responseEncomendas = await fetch(`${API_URL}/api/encomendas/101`);
+    const dadosEncomendas = await responseEncomendas.json();
 
-      // 👇 Nome (se existir tabela)
-      const { data: morador } = await supabase
-        .from('moradores')
-        .select('nome')
-        .eq('email', user.email)
-        .single();
+    setEncomendasPendentes(dadosEncomendas.length || 0);
 
-      if (morador?.nome) {
-        setNomeUsuario(morador.nome.split(' ')[0]);
-      }
+    // Dados financeiros
+    const responseFinanceiro = await fetch(`${API_URL}/api/financeiro/relatorio`);
+    const dadosFinanceiro = await responseFinanceiro.json();
 
-      // 👇 Encomendas (seguro)
-      const { count } = await supabase
-        .from('encomendas')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'aguardando');
+    setTotalGastos(dadosFinanceiro.resumo.total_saidas || 0);
 
-      setEncomendasPendentes(count || 0);
+    // Por enquanto, nome fixo
+    setNomeUsuario('Morador');
 
-      // 👇 Gastos (seguro)
-      const mesAtual = new Date().toISOString().slice(0, 7);
-
-      const { data: gastos } = await supabase
-        .from('gastos')
-        .select('valor')
-        .eq('mes_referencia', mesAtual);
-
-      const total = gastos?.reduce((acc, g) => acc + Number(g.valor), 0) || 0;
-      setTotalGastos(total);
-
-    } catch (error) {
-      console.log('Erro ao carregar dados:', error);
-    }
+  } catch (error) {
+    console.log('Erro ao carregar dados:', error);
   }
-
-  return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      
-      <View style={styles.header}>
-        <Text style={styles.greeting}>
-          Olá, {nomeUsuario || 'morador'}! 👋
-        </Text>
-        <Text style={styles.subtitle}>Bem-vindo ao Condo Secure</Text>
-      </View>
-
-      <View style={styles.cardsRow}>
-        <TouchableOpacity
-          style={[styles.card, styles.cardBlue]}
-          onPress={() => router.push('/(tabs)/encomendas')}
-        >
-          <Text style={styles.cardNumber}>{encomendasPendentes}</Text>
-          <Text style={styles.cardLabel}>Encomendas{'\n'}aguardando</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.card, styles.cardGreen]}
-          onPress={() => router.push('/(tabs)/gastos')}
-        >
-          <Text style={styles.cardNumber}>
-            R$ {totalGastos.toFixed(2)}
-          </Text>
-          <Text style={styles.cardLabel}>Gastos do{'\n'}mês</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Acesso rápido</Text>
-
-        <TouchableOpacity
-          style={styles.quickBtn}
-          onPress={() => router.push('/(tabs)/encomendas')}
-        >
-          <Text style={styles.quickBtnIcon}>📦</Text>
-          <View>
-            <Text style={styles.quickBtnTitle}>Encomendas</Text>
-            <Text style={styles.quickBtnSub}>Ver todas</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.quickBtn}
-          onPress={() => router.push('/(tabs)/gastos')}
-        >
-          <Text style={styles.quickBtnIcon}>💰</Text>
-          <View>
-            <Text style={styles.quickBtnTitle}>Gastos</Text>
-            <Text style={styles.quickBtnSub}>Ver detalhes</Text>
-          </View>
-        </TouchableOpacity>
-
-      </View>
-    </ScrollView>
-  );
-}
+}    
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
@@ -156,4 +78,4 @@ const styles = StyleSheet.create({
   quickBtnIcon: { fontSize: 24 },
   quickBtnTitle: { fontSize: 15, fontWeight: '600', color: Colors.textPrimary },
   quickBtnSub: { fontSize: 12, color: Colors.textSecondary },
-});
+})};

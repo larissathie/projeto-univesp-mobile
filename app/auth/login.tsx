@@ -2,7 +2,6 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../constants/colors';
-import { supabase } from '../../lib/supabase';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -10,44 +9,25 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
-    if (!email || !senha) {
-      Alert.alert('Atenção', 'Preencha e-mail e senha.');
-      return;
-    }
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password: senha,
-    });
-    setLoading(false);
-    if (error) {
-      Alert.alert('Erro ao entrar', error.message);
-    } else {
-      router.replace('/(tabs)');
-    }
+  if (!email || !senha) {
+    Alert.alert('Atenção', 'Preencha e-mail e senha.');
+    return;
   }
+
+  setLoading(true);
+
+  setTimeout(() => {
+    setLoading(false);
+    router.replace('/(tabs)');
+  }, 500);
+}
 
   async function handleSignUp() {
-    if (!email || !senha) {
-      Alert.alert('Atenção', 'Preencha e-mail e senha.');
-      return;
-    }
-
-    setLoading(true);
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password: senha,
-    });
-
-    setLoading(false);
-
-    if (error) {
-      Alert.alert('Erro ao cadastrar', error.message);
-    } else {
-      Alert.alert('Sucesso', 'Conta criada!');
-    }
-  }
+  Alert.alert(
+    'Cadastro',
+    'O cadastro deve ser realizado pelo síndico no sistema web.'
+  );
+}
 
   return (
     <KeyboardAvoidingView
